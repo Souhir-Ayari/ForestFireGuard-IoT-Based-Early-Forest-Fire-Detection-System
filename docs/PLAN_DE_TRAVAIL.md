@@ -27,6 +27,7 @@ et vérifier que serveur + dashboard + simulateur tournent sur ton PC.
 |---|-------|------------------|
 | 1.1 | ⬜ Créer un compte sur wokwi.com, nouveau projet **ESP32** | Projet vide |
 | 1.2 | ⬜ Copier `sketch.ino`, `diagram.json`, `libraries.txt` depuis `iot/wokwi/` | Le circuit apparaît |
+| 1.2 bis | ⬜ *Ou* dans VS Code : ouvrir le dossier `iot/wokwi/`, Build PlatformIO, puis « Wokwi: Start Simulator » (voir README) | Simulation locale |
 | 1.3 | ⬜ Lancer la simulation, vérifier le moniteur série (WiFi OK, MQTT OK, envois toutes les 2 s) | Mesures affichées |
 | 1.4 | ⬜ Changer `TOPIC_BASE` si besoin (doit être identique à `server/.env`) | Topic unique |
 | 1.5 | ⬜ Tester les LEDs : cliquer sur le DHT22 / tourner le potentiomètre | Vert → jaune → rouge + buzzer |

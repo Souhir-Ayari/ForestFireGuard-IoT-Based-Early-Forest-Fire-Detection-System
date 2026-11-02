@@ -38,6 +38,7 @@ broker MQTT public (`broker.hivemq.com`), qui relaie les messages dans les deux 
 
 ```
 iot/wokwi/        sketch.ino, diagram.json, libraries.txt  (couche IoT)
+                  + platformio.ini, wokwi.toml  (simulation dans VS Code)
 server/app/       API FastAPI, MQTT, règles de risque, stockage  (couche serveur)
 server/ml/        entraînement du modèle IA (Random Forest)
 server/scripts/   simulate_sensor.py : simulateur de capteur (sans Wokwi)
@@ -83,6 +84,21 @@ npm run dev
 python scripts/simulate_sensor.py --scenario demo         # normal → vigilance → feu
 python scripts/simulate_sensor.py --mode mqtt --scenario fire
 ```
+
+### Wokwi dans VS Code (option a bis)
+
+L'extension Wokwi de VS Code ne compile pas le code : elle simule le firmware compilé par
+**PlatformIO**, indiqué dans `iot/wokwi/wokwi.toml`.
+
+1. Installer les extensions **PlatformIO IDE** et **Wokwi Simulator** dans VS Code.
+2. Activer la licence Wokwi (gratuite) : `F1` → **Wokwi: Request a New License**.
+3. **Fichier → Ouvrir le dossier… → `iot/wokwi/`** (ce dossier doit être la racine du workspace,
+   sinon l'extension affiche « wokwi.toml configuration file not found in workspace »).
+4. Compiler : bouton ✓ **Build** de PlatformIO (ou `pio run`). Le premier build télécharge
+   la plateforme ESP32 et les bibliothèques (quelques minutes).
+5. `F1` → **Wokwi: Start Simulator**.
+
+Après chaque modification de `sketch.ino`, recompiler (étape 4) avant de relancer la simulation.
 
 Dans Wokwi : cliquer sur le **DHT22** pour changer la température/l'humidité, et tourner le
 **potentiomètre** pour simuler la fumée. Les LEDs et le buzzer suivent le niveau de risque.
