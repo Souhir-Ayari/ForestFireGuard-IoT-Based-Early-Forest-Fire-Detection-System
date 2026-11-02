@@ -4,6 +4,8 @@ Projet IoT : un nœud ESP32 simulé dans **Wokwi** mesure la température, l'hum
 un serveur **FastAPI** évalue le niveau de risque (règles + **Random Forest**), les données sont
 stockées dans **Firebase**, et un **dashboard React** affiche les mesures, les courbes et les alertes.
 
+> 🚀 **Débutant / Windows ? Suivre [`docs/GUIDE_LANCEMENT.md`](docs/GUIDE_LANCEMENT.md)** : lancement par double-clic sur les fichiers `.bat`.
+>
 > 📋 Plan de travail détaillé : [`docs/PLAN_DE_TRAVAIL.md`](docs/PLAN_DE_TRAVAIL.md)
 
 ## Architecture
@@ -85,7 +87,7 @@ python scripts/simulate_sensor.py --scenario demo         # normal → vigilance
 python scripts/simulate_sensor.py --mode mqtt --scenario fire
 ```
 
-### Wokwi dans VS Code (option a bis)
+### Wokwi dans VS Code (optionnel, PlatformIO)
 
 L'extension Wokwi de VS Code ne compile pas le code : elle simule le firmware compilé par
 **PlatformIO**, indiqué dans `iot/wokwi/wokwi.toml`.
