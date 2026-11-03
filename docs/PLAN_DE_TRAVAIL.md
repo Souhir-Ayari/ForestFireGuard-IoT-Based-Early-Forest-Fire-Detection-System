@@ -38,8 +38,8 @@ et vérifier que serveur + dashboard + simulateur tournent sur ton PC.
 
 | # | Tâche | Résultat attendu |
 |---|-------|------------------|
-| 2.1 | ⬜ Lancer le serveur, ouvrir `http://localhost:8000/docs` | Swagger visible |
-| 2.2 | ⬜ Vérifier `/api/health` : `mqtt.connected = true` | Lien avec le broker |
+| 2.1 | ✅ Lancer le serveur, ouvrir `http://localhost:8000/docs` | Swagger visible |
+| 2.2 | ✅ Vérifier `/api/health` : `mqtt.connected = true` | Lien avec le broker |
 | 2.3 | ⬜ Lancer Wokwi + serveur : les mesures de l'ESP32 arrivent dans `/api/measurements` | Chaîne IoT → serveur OK |
 | 2.4 | ⬜ Vérifier que l'ESP32 reçoit le risque renvoyé (`Serveur -> risque ...` dans le moniteur série) | Boucle complète |
 | 2.5 | ⬜ Ajuster les seuils des règles dans `server/app/risk.py` | Règles justifiées |
@@ -51,17 +51,17 @@ Voir le guide pas à pas : [`docs/FIREBASE.md`](FIREBASE.md).
 
 | # | Tâche | Résultat attendu |
 |---|-------|------------------|
-| 3.1 | ⬜ Créer le projet Firebase + base **Firestore** | Console Firebase |
-| 3.2 | ⬜ Générer la clé de compte de service → `server/serviceAccountKey.json` | Fichier présent (jamais commité) |
-| 3.3 | ⬜ Mettre `USE_FIREBASE=true` dans `server/.env`, relancer | `/api/health` → `storage: firebase` |
-| 3.4 | ⬜ Vérifier les collections `measurements` et `alerts` dans la console | Données visibles |
+| 3.1 | ✅ Créer le projet Firebase + base **Firestore** | Console Firebase |
+| 3.2 | ✅ Générer la clé de compte de service → `server/serviceAccountKey.json` | Fichier présent (jamais commité) |
+| 3.3 | ✅ Mettre `USE_FIREBASE=true` dans `server/.env`, relancer | `/api/health` → `storage: firebase` |
+| 3.4 | ✅ Vérifier les collections `measurements` et `alerts` dans la console | Données visibles |
 | 3.5 | ⬜ Créer l'index composite demandé par Firestore (lien dans le message d'erreur) pour le filtre `device_id` | Requêtes OK |
 
 ## Phase 4 — Couche Interface : Dashboard React
 
 | # | Tâche | Résultat attendu |
 |---|-------|------------------|
-| 4.1 | ⬜ Lancer `npm run dev`, ouvrir `http://localhost:5173` | Dashboard en direct |
+| 4.1 | ✅ Lancer `npm run dev`, ouvrir `http://localhost:5173` | Dashboard en direct |
 | 4.2 | ⬜ Personnaliser (logo, couleurs, titre) | Identité du projet |
 | 4.3 | ⬜ (Bonus) Filtre par capteur, choix de la période | Ergonomie |
 | 4.4 | ⬜ (Bonus) Notification sonore / visuelle à l'arrivée d'une alerte | Alerte visible |
