@@ -50,11 +50,13 @@ class FirebaseStorage:
     def __init__(self, credentials_path: str) -> None:
         import firebase_admin
         from firebase_admin import credentials, firestore
+        from google.cloud.firestore_v1.base_query import FieldFilter
 
         if not firebase_admin._apps:
             firebase_admin.initialize_app(credentials.Certificate(credentials_path))
         self._db = firestore.client()
         self._query = firestore.Query
+        self._field_filter = FieldFilter
 
     def _save(self, collection: str, data: dict) -> dict:
         ref = self._db.collection(collection).document()
@@ -64,7 +66,7 @@ class FirebaseStorage:
     def _list(self, collection: str, limit: int, device_id: str | None = None) -> list[dict]:
         query = self._db.collection(collection)
         if device_id:
-            query = query.where("device_id", "==", device_id)
+            query = query.where(filter=self._field_filter("device_id", "==", device_id))
         query = query.order_by("timestamp", direction=self._query.DESCENDING).limit(limit)
         return [{"id": doc.id, **doc.to_dict()} for doc in query.stream()]
 

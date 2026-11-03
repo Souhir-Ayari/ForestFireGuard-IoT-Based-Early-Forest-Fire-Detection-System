@@ -13,6 +13,9 @@ Tant que Firebase n'est pas configuré, le serveur garde les données **en mémo
 4. Renommer ce fichier `serviceAccountKey.json` et le placer dans `server/`.
    ⚠️ Il est déjà dans `.gitignore` : **ne jamais le commiter ni le partager**.
 5. Dans `server/.env` : `USE_FIREBASE=true`, puis relancer le serveur.
+5 bis. Tester la connexion : double-cliquer sur `4_tester_firebase.bat`
+   (ou `python scripts/test_firebase.py` dans `server/`). Le message
+   `OK : Firebase fonctionne (écriture, lecture et suppression).` doit s'afficher.
 6. Vérifier : `http://localhost:8000/api/health` doit afficher `"storage": "firebase (firestore)"`.
 7. Envoyer quelques mesures (simulateur ou Wokwi), puis ouvrir la console Firestore :
    les collections `measurements` et `alerts` apparaissent.

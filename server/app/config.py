@@ -21,9 +21,8 @@ MQTT_TOPIC_BASE = os.getenv("MQTT_TOPIC_BASE", "forestfireguard/souhir-ayari")
 
 # --- Firebase (base de données) ---
 USE_FIREBASE = _bool("USE_FIREBASE", False)
-FIREBASE_CREDENTIALS = os.getenv(
-    "FIREBASE_CREDENTIALS", str(BASE_DIR / "serviceAccountKey.json")
-)
+# Chemin relatif = relatif au dossier server/
+FIREBASE_CREDENTIALS = str(BASE_DIR / os.getenv("FIREBASE_CREDENTIALS", "serviceAccountKey.json"))
 
 # --- Modèle IA ---
 MODEL_PATH = Path(os.getenv("MODEL_PATH", str(BASE_DIR / "ml" / "model.joblib")))
