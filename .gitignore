@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Secrets — ne jamais commiter
+.env
+serviceAccountKey.json
+*-firebase-adminsdk-*.json
+
+# Modèle et dataset générés (python ml/train_model.py)
+server/ml/model.joblib
+server/ml/dataset.csv
+
+# Node
+node_modules/
+dist/
+
+# Éditeurs / OS
+.vscode/
+.idea/
+.DS_Store
+
+# PlatformIO (firmware compilé)
+.pio/
