@@ -1,5 +1,7 @@
 @echo off
 REM Lance le serveur FastAPI. La premiere fois, installe aussi tout ce qu'il faut.
+chcp 65001 >nul
+set PYTHONUTF8=1
 cd /d "%~dp0server"
 
 if exist .venv\Scripts\uvicorn.exe goto start

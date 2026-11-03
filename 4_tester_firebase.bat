@@ -1,5 +1,7 @@
 @echo off
 REM Verifie la connexion a Firebase : ecrit, relit puis supprime une mesure de test.
+chcp 65001 >nul
+set PYTHONUTF8=1
 cd /d "%~dp0server"
 
 if exist .venv\Scripts\python.exe goto start
