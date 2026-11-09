@@ -1,0 +1,43 @@
+{
+  "info": {
+    "name": "ArtConnect minimal - CRUD Artist",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{ "key": "baseUrl", "value": "http://localhost:8080/api/artists" }],
+  "item": [
+    {
+      "name": "1. Read all (GET) -> 200",
+      "request": { "method": "GET", "url": "{{baseUrl}}" }
+    },
+    {
+      "name": "2. Create (POST) -> 201",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Lina\",\n  \"domain\": \"PHOTOGRAPHER\"\n}" },
+        "url": "{{baseUrl}}"
+      }
+    },
+    {
+      "name": "3. Read by id (GET) -> 200",
+      "request": { "method": "GET", "url": "{{baseUrl}}/3" }
+    },
+    {
+      "name": "4. Update (PUT) -> 200",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Lina K.\",\n  \"domain\": \"PAINTER\"\n}" },
+        "url": "{{baseUrl}}/3"
+      }
+    },
+    {
+      "name": "5. Delete (DELETE) -> 204",
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/3" }
+    },
+    {
+      "name": "6. Read deleted id (GET) -> 404",
+      "request": { "method": "GET", "url": "{{baseUrl}}/3" }
+    }
+  ]
+}
