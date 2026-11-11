@@ -7,6 +7,8 @@ stockées dans **Firebase**, et un **dashboard React** affiche les mesures, les 
 > 🚀 **Débutant / Windows ? Suivre [`docs/GUIDE_LANCEMENT.md`](docs/GUIDE_LANCEMENT.md)** : lancement par double-clic sur les fichiers `.bat`.
 >
 > 📋 Plan de travail détaillé : [`docs/PLAN_DE_TRAVAIL.md`](docs/PLAN_DE_TRAVAIL.md)
+>
+> 🗓️ Nouvelles fonctionnalités, jour par jour : [`docs/PLAN_FONCTIONNALITES.md`](docs/PLAN_FONCTIONNALITES.md)
 
 ## Architecture
 
