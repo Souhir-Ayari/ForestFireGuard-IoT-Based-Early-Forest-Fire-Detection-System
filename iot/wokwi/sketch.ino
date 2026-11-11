@@ -1,7 +1,7 @@
 /*
  * ForestFireGuard — Nœud capteur ESP32 (simulation Wokwi)
  *
- * Capteurs : DHT22 (température / humidité) + potentiomètre simulant un MQ-2 (fumée)
+ * Capteurs : DHT22 (température / humidité) + MQ-2 (gaz / fumée) + capteur de flamme infrarouge
  * Actionneurs : LED verte / jaune / rouge + buzzer
  * Communication : MQTT (broker public) -> serveur FastAPI local
  *
@@ -28,7 +28,11 @@ const unsigned long SERVER_TIMEOUT_MS = 10000;  // au-delà : règles locales
 
 // ---------- Broches ----------
 const int DHT_PIN    = 15;
-const int SMOKE_PIN  = 34;  // entrée analogique (ADC1)
+const int SMOKE_PIN  = 34;  // MQ-2 : sortie analogique AOUT (ADC1)
+const int FLAME_PIN  = 32;  // capteur de flamme : sortie numérique DOUT
+// La sortie DOUT du capteur de flamme passe à LOW quand une flamme est détectée.
+// Si "flame" vaut true sans flamme dans Wokwi, mettre false ici.
+const bool FLAME_ACTIVE_LOW = true;
 const int LED_GREEN  = 25;
 const int LED_YELLOW = 26;
 const int LED_RED    = 27;
@@ -46,8 +50,8 @@ unsigned long lastServerReply = 0;
 unsigned long lastSend = 0;
 
 // Règles de secours, identiques à celles du serveur (server/app/risk.py)
-int localRiskLevel(float t, float h, float smoke) {
-  if (smoke >= 60 || (t >= 50 && h <= 20)) return 2;
+int localRiskLevel(float t, float h, float smoke, bool flame) {
+  if (flame || smoke >= 60 || (t >= 50 && h <= 20)) return 2;
   if (smoke >= 30 || (t >= 35 && h <= 30) || t >= 50) return 1;
   return 0;
 }
@@ -98,6 +102,7 @@ void setup() {
   pinMode(LED_YELLOW, OUTPUT);
   pinMode(LED_RED, OUTPUT);
   pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(FLAME_PIN, INPUT);
   dht.setup(DHT_PIN, DHTesp::DHT22);
 
   snprintf(topicData, sizeof(topicData), "%s/%s/data", TOPIC_BASE, DEVICE_ID);
@@ -122,17 +127,19 @@ void loop() {
     return;
   }
   float smoke = analogRead(SMOKE_PIN) * 100.0 / 4095.0;  // 0-4095 -> 0-100 %
+  bool flame = digitalRead(FLAME_PIN) == (FLAME_ACTIVE_LOW ? LOW : HIGH);
 
   JsonDocument doc;
   doc["device_id"]   = DEVICE_ID;
   doc["temperature"] = round(th.temperature * 10) / 10.0;
   doc["humidity"]    = round(th.humidity * 10) / 10.0;
   doc["smoke"]       = round(smoke * 10) / 10.0;
+  doc["flame"]       = flame;
   char buffer[160];
   serializeJson(doc, buffer);
   mqtt.publish(topicData, buffer);
   Serial.printf("Envoi -> %s\n", buffer);
 
   bool serverOk = serverLevel >= 0 && millis() - lastServerReply < SERVER_TIMEOUT_MS;
-  showLevel(serverOk ? serverLevel : localRiskLevel(th.temperature, th.humidity, smoke));
+  showLevel(serverOk ? serverLevel : localRiskLevel(th.temperature, th.humidity, smoke, flame));
 }

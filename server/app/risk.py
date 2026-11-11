@@ -16,10 +16,16 @@ HUMIDITY_LOW = 30
 HUMIDITY_VERY_LOW = 20
 
 
-def evaluate_rules(temperature: float, humidity: float, smoke: float) -> tuple[int, list[str]]:
+def evaluate_rules(
+    temperature: float, humidity: float, smoke: float, flame: bool = False
+) -> tuple[int, list[str]]:
     """Règles simples et explicables. Retourne (niveau, raisons)."""
     reasons: list[str] = []
     level = 0
+
+    if flame:
+        level = 2
+        reasons.append("flamme détectée")
 
     if smoke >= SMOKE_HIGH:
         level = 2
@@ -66,9 +72,9 @@ class RiskModel:
 risk_model = RiskModel()
 
 
-def evaluate(temperature: float, humidity: float, smoke: float) -> dict:
+def evaluate(temperature: float, humidity: float, smoke: float, flame: bool = False) -> dict:
     """Combine règles et IA : on garde le niveau le plus prudent (le plus élevé)."""
-    rule_level, reasons = evaluate_rules(temperature, humidity, smoke)
+    rule_level, reasons = evaluate_rules(temperature, humidity, smoke, flame)
     ml_level = risk_model.predict(temperature, humidity, smoke)
 
     if ml_level is None:

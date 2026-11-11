@@ -8,7 +8,8 @@ class MeasurementIn(BaseModel):
     device_id: str = Field(default="esp32-node-1", min_length=1, max_length=64)
     temperature: float = Field(ge=-40, le=80, description="°C (plage du DHT22)")
     humidity: float = Field(ge=0, le=100, description="% d'humidité relative")
-    smoke: float = Field(ge=0, le=100, description="Niveau de fumée/gaz en % (MQ-2 simulé)")
+    smoke: float = Field(ge=0, le=100, description="Niveau de fumée/gaz en % (MQ-2)")
+    flame: bool = Field(default=False, description="Flamme détectée par le capteur infrarouge")
 
 
 class Risk(BaseModel):
@@ -34,3 +35,4 @@ class Alert(BaseModel):
     temperature: float
     humidity: float
     smoke: float
+    flame: bool = False

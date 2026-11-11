@@ -13,6 +13,7 @@ export default function HistoryTable({ measurements }) {
             <th>Temp. (°C)</th>
             <th>Humidité (%)</th>
             <th>Fumée (%)</th>
+            <th>Flamme</th>
             <th>Risque</th>
           </tr>
         </thead>
@@ -24,6 +25,7 @@ export default function HistoryTable({ measurements }) {
               <td>{m.temperature}</td>
               <td>{m.humidity}</td>
               <td>{m.smoke}</td>
+              <td>{m.flame ? '🔥 oui' : 'non'}</td>
               <td><RiskBadge level={m.risk.level} label={m.risk.label} /></td>
             </tr>
           ))}

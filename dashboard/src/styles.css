@@ -74,6 +74,7 @@ body { margin: 0; background: var(--bg); }
   font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em;
 }
 .badge-large { font-size: 1.4rem; padding: 6px 16px; align-self: flex-start; }
+.badge-flame { font-size: 1.1rem; padding: 6px 14px; align-self: flex-start; white-space: nowrap; }
 .risk-low { background: var(--low-bg); color: var(--low); }
 .risk-medium { background: var(--medium-bg); color: var(--medium); }
 .risk-high { background: var(--high-bg); color: var(--high); }

@@ -47,8 +47,8 @@ et des alertes apparaissent.
 5. Cliquer sur le bouton vert **▶**. En bas, le moniteur série affiche `Connexion WiFi... OK`,
    puis `Connexion MQTT... OK`, puis `Envoi -> {...}` toutes les 2 secondes.
 6. Les mesures apparaissent sur le dashboard (capteur `esp32-node-1`).
-7. Pour tester, cliquer sur le capteur **DHT22** pendant la simulation pour changer la
-   température et l'humidité, et tourner le **potentiomètre** pour simuler la fumée.
+7. Pour tester, cliquer pendant la simulation sur le **DHT22** (température, humidité),
+   sur le **capteur de gaz** (fumée) ou sur le **capteur de flamme**.
 
 > Le serveur (étape 1) doit tourner, sinon les LEDs restent pilotées par les règles locales
 > de l'ESP32, et rien n'arrive sur le dashboard.

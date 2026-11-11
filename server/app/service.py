@@ -20,7 +20,7 @@ _lock = threading.Lock()
 def process_measurement(measurement: MeasurementIn) -> dict:
     data = measurement.model_dump()
     data["timestamp"] = datetime.now(timezone.utc).isoformat()
-    data["risk"] = evaluate(data["temperature"], data["humidity"], data["smoke"])
+    data["risk"] = evaluate(data["temperature"], data["humidity"], data["smoke"], data["flame"])
     saved = storage.save_measurement(data)
 
     level = data["risk"]["level"]
@@ -39,6 +39,7 @@ def process_measurement(measurement: MeasurementIn) -> dict:
             "temperature": data["temperature"],
             "humidity": data["humidity"],
             "smoke": data["smoke"],
+            "flame": data["flame"],
         })
         log.warning("ALERTE %s sur %s : %s", data["risk"]["label"], measurement.device_id, reasons)
 

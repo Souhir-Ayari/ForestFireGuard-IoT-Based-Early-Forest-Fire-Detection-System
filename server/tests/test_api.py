@@ -18,6 +18,22 @@ def test_rules_levels():
     assert evaluate_rules(52, 15, 10)[0] == 2
 
 
+def test_flame_alone_gives_high_risk():
+    level, reasons = evaluate_rules(22, 65, 0, flame=True)
+    assert level == 2
+    assert "flamme détectée" in reasons
+
+
+def test_flame_measurement_creates_high_alert():
+    base = {"device_id": "flame-node", "temperature": 22, "humidity": 65, "smoke": 2}
+    assert client.post("/api/measurements", json=base).json()["flame"] is False
+    r = client.post("/api/measurements", json={**base, "flame": True})
+    assert r.json()["risk"]["level"] == 2
+    alert = next(a for a in client.get("/api/alerts").json() if a["device_id"] == "flame-node")
+    assert alert["flame"] is True
+    assert "flamme" in alert["message"]
+
+
 def test_health():
     r = client.get("/api/health")
     assert r.status_code == 200

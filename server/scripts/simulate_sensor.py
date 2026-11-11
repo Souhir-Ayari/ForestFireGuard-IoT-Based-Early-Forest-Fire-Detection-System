@@ -17,20 +17,21 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 SCENARIOS = {
-    # (température, humidité, fumée) cibles
-    "normal": (24, 60, 8),
-    "vigilance": (38, 25, 20),
-    "fire": (48, 15, 75),
+    # (température, humidité, fumée, flamme) cibles
+    "normal": (24, 60, 8, False),
+    "vigilance": (38, 25, 20, False),
+    "fire": (48, 15, 75, True),
 }
 
 
 def reading(scenario: str, device_id: str) -> dict:
-    t, h, s = SCENARIOS[scenario]
+    t, h, s, flame = SCENARIOS[scenario]
     return {
         "device_id": device_id,
         "temperature": round(t + random.uniform(-1.5, 1.5), 1),
         "humidity": round(min(100, max(0, h + random.uniform(-3, 3))), 1),
         "smoke": round(min(100, max(0, s + random.uniform(-3, 3))), 1),
+        "flame": flame,
     }
 
 

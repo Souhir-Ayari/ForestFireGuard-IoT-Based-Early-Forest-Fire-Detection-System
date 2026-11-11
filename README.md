@@ -16,7 +16,7 @@ stockées dans **Firebase**, et un **dashboard React** affiche les mesures, les 
 ┌──────────────────────┐   MQTT (broker public)    ┌──────────────────────────┐
 │ 1. COUCHE IoT        │  .../<device>/data  ───▶  │ 2. COUCHE SERVEUR        │
 │ Wokwi : ESP32        │                           │ Python FastAPI (local)   │
-│ DHT22 + MQ-2 (pot.)  │  ◀───  .../<device>/risk  │ validation, règles, IA   │
+│ DHT22, MQ-2, flamme  │  ◀───  .../<device>/risk  │ validation, règles, IA   │
 │ LEDs + buzzer        │                           └────────────┬─────────────┘
 └──────────────────────┘                                        │
                                                                 ▼
@@ -36,7 +36,7 @@ broker MQTT public (`broker.hivemq.com`), qui relaie les messages dans les deux 
 |--------|---------|-----|----------------------|
 | 0 — faible | vert | verte | valeurs normales |
 | 1 — modéré (vigilance) | jaune | jaune | ≥ 35 °C et ≤ 30 % d'humidité, ou fumée ≥ 30 % |
-| 2 — élevé (alerte) | rouge | rouge + buzzer | fumée ≥ 60 %, ou ≥ 50 °C et ≤ 20 % d'humidité |
+| 2 — élevé (alerte) | rouge | rouge + buzzer | flamme détectée, ou fumée ≥ 60 %, ou ≥ 50 °C et ≤ 20 % d'humidité |
 
 ## Arborescence
 
@@ -104,8 +104,9 @@ L'extension Wokwi de VS Code ne compile pas le code : elle simule le firmware co
 
 Après chaque modification de `sketch.ino`, recompiler (étape 4) avant de relancer la simulation.
 
-Dans Wokwi : cliquer sur le **DHT22** pour changer la température/l'humidité, et tourner le
-**potentiomètre** pour simuler la fumée. Les LEDs et le buzzer suivent le niveau de risque.
+Dans Wokwi, pendant la simulation, cliquer sur un capteur pour changer sa valeur :
+le **DHT22** (température/humidité), le **capteur de gaz MQ-2** (fumée) et le
+**capteur de flamme**. Les LEDs et le buzzer suivent le niveau de risque.
 
 ## Tests
 

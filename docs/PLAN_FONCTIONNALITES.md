@@ -12,7 +12,7 @@ Légende : ⬜ à faire · 🔄 en cours · ✅ terminé
 
 | Bloc | Jour | Fonctionnalité | Couches touchées |
 |------|------|----------------|------------------|
-| **A. Nouveaux capteurs** | J1 | ⬜ Capteur de gaz MQ-2 + capteur de flamme | IoT, serveur, dashboard |
+| **A. Nouveaux capteurs** | J1 | 🔄 Capteur de gaz MQ-2 + capteur de flamme | IoT, serveur, dashboard |
 | | J2 | ⬜ Vitesse du vent et risque de propagation | IoT, serveur, dashboard |
 | | J3 | ⬜ Écran LCD sur l'ESP32 | IoT |
 | **B. Réseau de capteurs** | J4 | ⬜ Fiche capteur (collection `devices`) | serveur, Firebase, dashboard |
