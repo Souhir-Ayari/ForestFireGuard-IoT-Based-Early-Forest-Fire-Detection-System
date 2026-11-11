@@ -1,0 +1,6 @@
+# Configuration de l'extension Wokwi pour VS Code.
+# Compiler d'abord avec PlatformIO (pio run), puis F1 -> "Wokwi: Start Simulator".
+[wokwi]
+version = 1
+firmware = '.pio/build/esp32dev/firmware.bin'
+elf = '.pio/build/esp32dev/firmware.elf'
