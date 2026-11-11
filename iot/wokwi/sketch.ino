@@ -8,6 +8,9 @@
  * Toutes les 2 s, l'ESP32 publie une mesure JSON sur  <TOPIC_BASE>/<DEVICE_ID>/data
  * et écoute le niveau de risque renvoyé par le serveur sur <TOPIC_BASE>/<DEVICE_ID>/risk.
  * Si le serveur ne répond pas, des règles locales prennent le relais.
+ *
+ * Calibration : au démarrage, l'ESP32 mesure l'air propre et l'état « sans flamme ».
+ * Ne pas toucher aux capteurs de gaz et de flamme pendant les premières secondes.
  */
 #include <WiFi.h>
 #include <PubSubClient.h>
@@ -30,9 +33,6 @@ const unsigned long SERVER_TIMEOUT_MS = 10000;  // au-delà : règles locales
 const int DHT_PIN    = 15;
 const int SMOKE_PIN  = 34;  // MQ-2 : sortie analogique AOUT (ADC1)
 const int FLAME_PIN  = 32;  // capteur de flamme : sortie numérique DOUT
-// La sortie DOUT du capteur de flamme passe à LOW quand une flamme est détectée.
-// Si "flame" vaut true sans flamme dans Wokwi, mettre false ici.
-const bool FLAME_ACTIVE_LOW = true;
 const int LED_GREEN  = 25;
 const int LED_YELLOW = 26;
 const int LED_RED    = 27;
@@ -49,6 +49,10 @@ int serverLevel = -1;
 unsigned long lastServerReply = 0;
 unsigned long lastSend = 0;
 
+int gasBaseline = 0;     // valeur brute du MQ-2 dans l'air propre (calibration)
+int flameIdleLevel = 0;  // niveau de DOUT sans flamme (calibration)
+bool buzzerOn = false;
+
 // Règles de secours, identiques à celles du serveur (server/app/risk.py)
 int localRiskLevel(float t, float h, float smoke, bool flame) {
   if (flame || smoke >= 60 || (t >= 50 && h <= 20)) return 2;
@@ -60,8 +64,31 @@ void showLevel(int level) {
   digitalWrite(LED_GREEN,  level == 0);
   digitalWrite(LED_YELLOW, level == 1);
   digitalWrite(LED_RED,    level == 2);
-  if (level == 2) tone(BUZZER_PIN, 1000);
-  else noTone(BUZZER_PIN);
+  bool wantBuzzer = level == 2;
+  if (wantBuzzer && !buzzerOn) tone(BUZZER_PIN, 1000);
+  if (!wantBuzzer && buzzerOn) noTone(BUZZER_PIN);
+  buzzerOn = wantBuzzer;
+}
+
+// Mesure l'air propre et l'état « sans flamme », pour ne pas dépendre de l'échelle
+// du capteur de gaz ni du sens (actif haut / bas) de la sortie du capteur de flamme.
+void calibrateSensors() {
+  long sum = 0;
+  for (int i = 0; i < 20; i++) {
+    sum += analogRead(SMOKE_PIN);
+    delay(50);
+  }
+  gasBaseline = sum / 20;
+  flameIdleLevel = digitalRead(FLAME_PIN);
+  Serial.printf("Calibration : gaz air propre = %d, flamme au repos = %d\r\n",
+                gasBaseline, flameIdleLevel);
+}
+
+// Fumée en % : 0 dans l'air propre, 100 quand la sortie du MQ-2 est au maximum.
+float readSmokePercent(int raw) {
+  if (raw < gasBaseline) gasBaseline = raw;  // l'air est encore plus propre qu'au démarrage
+  int range = max(4095 - gasBaseline, 1);
+  return constrain((raw - gasBaseline) * 100.0 / range, 0.0, 100.0);
 }
 
 void onMqttMessage(char* topic, byte* payload, unsigned int length) {
@@ -69,7 +96,7 @@ void onMqttMessage(char* topic, byte* payload, unsigned int length) {
   if (deserializeJson(doc, payload, length)) return;
   serverLevel = doc["level"] | -1;
   lastServerReply = millis();
-  Serial.printf("Serveur -> risque %s (%d)\n", (const char*)(doc["label"] | "?"), serverLevel);
+  Serial.printf("Serveur -> risque %s (%d)\r\n", (const char*)(doc["label"] | "?"), serverLevel);
 }
 
 void connectWiFi() {
@@ -90,7 +117,7 @@ void connectMqtt() {
       mqtt.subscribe(topicRisk);
       Serial.println("OK");
     } else {
-      Serial.printf("échec (%d), nouvel essai\n", mqtt.state());
+      Serial.printf("échec (%d), nouvel essai\r\n", mqtt.state());
       delay(2000);
     }
   }
@@ -104,6 +131,7 @@ void setup() {
   pinMode(BUZZER_PIN, OUTPUT);
   pinMode(FLAME_PIN, INPUT);
   dht.setup(DHT_PIN, DHTesp::DHT22);
+  calibrateSensors();
 
   snprintf(topicData, sizeof(topicData), "%s/%s/data", TOPIC_BASE, DEVICE_ID);
   snprintf(topicRisk, sizeof(topicRisk), "%s/%s/risk", TOPIC_BASE, DEVICE_ID);
@@ -126,8 +154,9 @@ void loop() {
     Serial.println("Erreur de lecture DHT22");
     return;
   }
-  float smoke = analogRead(SMOKE_PIN) * 100.0 / 4095.0;  // 0-4095 -> 0-100 %
-  bool flame = digitalRead(FLAME_PIN) == (FLAME_ACTIVE_LOW ? LOW : HIGH);
+  int gasRaw = analogRead(SMOKE_PIN);
+  float smoke = readSmokePercent(gasRaw);
+  bool flame = digitalRead(FLAME_PIN) != flameIdleLevel;
 
   JsonDocument doc;
   doc["device_id"]   = DEVICE_ID;
@@ -138,7 +167,7 @@ void loop() {
   char buffer[160];
   serializeJson(doc, buffer);
   mqtt.publish(topicData, buffer);
-  Serial.printf("Envoi -> %s\n", buffer);
+  Serial.printf("Envoi -> %s  (gaz brut %d)\r\n", buffer, gasRaw);
 
   bool serverOk = serverLevel >= 0 && millis() - lastServerReply < SERVER_TIMEOUT_MS;
   showLevel(serverOk ? serverLevel : localRiskLevel(th.temperature, th.humidity, smoke, flame));
